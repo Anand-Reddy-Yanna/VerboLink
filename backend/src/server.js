@@ -15,12 +15,30 @@ const PORT = process.env.PORT;
 
 const __dirname = path.resolve();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true, // allow frontend to send cookies
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true, // allow frontend to send cookies
+//   })
+// );
+
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://verbolink-1.onrender.com",  // ✅ Your frontend on Render
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 
 app.use(express.json());
 app.use(cookieParser());
